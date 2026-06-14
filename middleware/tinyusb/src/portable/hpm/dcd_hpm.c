@@ -37,6 +37,8 @@
 #include "hpm_common.h"
 #include "hpm_soc.h"
 #include "hpm_usb_device.h"
+#include "hpm_usb_drv.h"
+#include "common/tusb_common.h"
 #include "device/dcd.h"
 
 #if CFG_TUD_ENABLED && defined(TUP_USBIP_CHIPIDEA_HS)
@@ -105,6 +107,9 @@ bool dcd_init(uint8_t rhport, const tusb_rhport_init_t* rh_init)
                     | USB_USBINTR_SLE_MASK
     #endif /* USB_DEVICE_CONFIG_LOW_POWER_MODE */
                     );
+
+    if (rh_init->speed == TUSB_SPEED_FULL)
+        usb_dcd_force_full_speed();
 
     return usb_device_init(&usb_device_handle[rhport], int_mask);
 }
