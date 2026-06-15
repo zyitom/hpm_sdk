@@ -125,7 +125,10 @@ bool dcd_deinit(uint8_t rhport)
 /* Enable device interrupt */
 void dcd_int_enable(uint8_t rhport)
 {
-    intc_m_enable_irq(_dcd_controller[rhport].irqnum);
+    /* USB is on the forwarding-critical path (host link, both directions), so
+     * raise it above the secondary UART. Higher number == more urgent on the
+     * PLIC; CAN RX matches this at priority 2. */
+    intc_m_enable_irq_with_priority(_dcd_controller[rhport].irqnum, 2);
 }
 
 /* Disable device interrupt */
